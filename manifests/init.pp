@@ -37,6 +37,7 @@ class clickhouse (
     Boolean   $server      = false,
     Boolean   $client      = true,
     Boolean   $manage_repo = false,
+    Boolean   $purge       = true,
     String[1] $user        = 'clickhouse',
     String[1] $group       = $user,
 ) {

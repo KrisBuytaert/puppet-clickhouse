@@ -9,8 +9,9 @@
 # @param conf_d_dir
 #   Deprecated, use config_d_dir.
 # @param config_d_dir
-#   Directory for custom configs. Unmanaged configs will be removed from the dirrectory during puppet running.
-#
+#   Directory for custom configs. Unmanaged configs will be removed from the directory during puppet running.
+# @param purge
+#   If set to false then unmanaged files will NOT be removed from the directory during a puppet run.
 # @example Simple use
 #   include clickhouse::client
 #
@@ -32,6 +33,7 @@ class clickhouse::client(
         undef   => '/etc/clickhouse-client/config.d',
         default => $conf_d_dir,
     },
+    Boolean                    $purge = $clickhouse::purge
 ) inherits clickhouse {
 
     package { $package_name:
@@ -63,7 +65,7 @@ class clickhouse::client(
         file { $config_d_dir:
             ensure  => 'directory',
             recurse => true,
-            purge   => true,
+            purge   => $purge,
             force   => true,
             require => Package[$package_name],
         }

@@ -24,6 +24,9 @@
 #   Directory with clickhouse-server included configuration. Unmanaged configs will be removed from the directory during puppet run.
 # @param users_d_dir
 #   Directory with clickhouse-server users configuration. Unmanaged configs will be removed from the directory during puppet run.
+# @param purge
+#   If set to false then unmanaged files will NOT be removed from the directory during a puppet run.
+
 #
 # @example Simple use
 #   include clickhouse::server
@@ -63,6 +66,8 @@ class clickhouse::server (
         default => $conf_d_dir,
     },
     Stdlib::Unixpath           $users_d_dir           = "${config_dir}/users.d",
+    Boolean                    $purge = $clickhouse::purge,
+
 ) inherits clickhouse {
 
     # TODO: remove it in 3 releases
@@ -80,7 +85,7 @@ class clickhouse::server (
         file { $conf_d_dir:
             ensure  => 'directory',
             recurse => true,
-            purge   => true,
+            purge   => $purge,
             force   => true,
             owner   => $clickhouse::user,
             group   => $clickhouse::group,
@@ -94,7 +99,7 @@ class clickhouse::server (
         file { $config_d_dir:
             ensure  => 'directory',
             recurse => true,
-            purge   => true,
+            purge   => $purge,
             force   => true,
             owner   => $clickhouse::user,
             group   => $clickhouse::group,
@@ -109,7 +114,7 @@ class clickhouse::server (
     file { $users_d_dir:
         ensure  => 'directory',
         recurse => true,
-        purge   => true,
+        purge   => $purge,
         force   => true,
         owner   => $clickhouse::user,
         group   => $clickhouse::group,
