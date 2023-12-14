@@ -37,11 +37,12 @@ class clickhouse (
     Boolean   $server            = false,
     Boolean   $client            = true,
     Boolean   $keeper            = true,
-    Boolean   $standalone_keeper = false,
     Boolean   $manage_repo       = false,
+    Boolean   $manage_package     = true,
     Boolean   $purge             = true,
     String[1] $user        = 'clickhouse',
     String[1] $group       = $user,
+    String    $keeper_packagename = 'clickhouse-keeper',
 ) {
 
     if $server {
@@ -58,17 +59,10 @@ class clickhouse (
 
 
     if $keeper {
-      if $standalone_keeper {
         class {'clickhouse::keeper':
-          package_ensure => present,
+          manage_package => $manage_package,
+          package_name   => $keeper_packagename,
         }
-      }
-      else
-      {
-        class {'clickhouse::keeper':
-          package_ensure => absent,
-        }
-      }
     }
 
 }

@@ -33,10 +33,11 @@
 # @author InnoGames GmbH
 #
 class clickhouse::keeper (
+    Boolean                    $manage_package        = true,
     String[1]                  $package_name          = 'clickhouse-keeper',
     # not needed if server is also installed
     String[1]                  $package_ensure        = 'installed',
-    String[1]                  $service_name          = $package_name,
+    String[1]                  $service_name          = 'clickhouse-keeper',
     Variant[Boolean, Enum[
         'running',
         'stopped'
@@ -56,13 +57,15 @@ class clickhouse::keeper (
 ) inherits clickhouse {
 
 
+  if $manage_package {
     package { $package_name:
-        ensure => $package_ensure,
+      ensure => $package_ensure,
     }
+  }
 
 
-    service { $service_name:
-        ensure    => $service_ensure,
-        enable    => $service_enable,
-    }
+  service { $service_name:
+    ensure => $service_ensure,
+    enable => $service_enable,
+  }
 }
