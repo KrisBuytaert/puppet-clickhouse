@@ -34,10 +34,12 @@
 # @author InnoGames GmbH
 #
 class clickhouse (
-    Boolean   $server      = false,
-    Boolean   $client      = true,
-    Boolean   $manage_repo = false,
-    Boolean   $purge       = true,
+    Boolean   $server            = false,
+    Boolean   $client            = true,
+    Boolean   $keeper            = true,
+    Boolean   $standalone_keeper = false,
+    Boolean   $manage_repo       = false,
+    Boolean   $purge             = true,
     String[1] $user        = 'clickhouse',
     String[1] $group       = $user,
 ) {
@@ -53,4 +55,20 @@ class clickhouse (
     if $manage_repo {
         include clickhouse::repo
     }
+
+
+    if $keeper {
+      if $standalone_keeper {
+        class {'clickhouse::keeper':
+          package_ensure => present,
+        }
+      }
+      else
+      {
+        class {'clickhouse::keeper':
+          package_ensure => absent,
+        }
+      }
+    }
+
 }
