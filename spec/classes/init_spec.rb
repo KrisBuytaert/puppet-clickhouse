@@ -6,7 +6,6 @@ describe 'clickhouse' do
   context 'with defaults' do
     it { is_expected.to contain_class('clickhouse::client') }
     it { is_expected.not_to contain_class('clickhouse::server') }
-    it { is_expected.not_to contain_class('clickhouse::repo') }
   end
 
   context 'with server' do
@@ -14,7 +13,6 @@ describe 'clickhouse' do
 
     it { is_expected.to contain_class('clickhouse::client') }
     it { is_expected.to contain_class('clickhouse::server') }
-    it { is_expected.not_to contain_class('clickhouse::repo') }
   end
 
   context 'without client' do
@@ -22,15 +20,12 @@ describe 'clickhouse' do
 
     it { is_expected.not_to contain_class('clickhouse::client') }
     it { is_expected.to contain_class('clickhouse::server') }
-    it { is_expected.not_to contain_class('clickhouse::repo') }
   end
 
-  context 'manage everything' do
-    let(:params) { { server: true, client: true, manage_repo: true } }
-    let(:facts) { { os: { family: 'RedHat', release: { major: 7 } }, osfamily: 'RedHat' } }
+  context 'never manages the package repository (the consumer does)' do
+    let(:params) { { server: true, client: true } }
 
-    it { is_expected.to contain_class('clickhouse::client') }
-    it { is_expected.to contain_class('clickhouse::server') }
-    it { is_expected.to contain_class('clickhouse::repo') }
+    it { is_expected.not_to contain_class('clickhouse::repo') }
+    it { is_expected.not_to contain_yumrepo('altinity_clickhouse') }
   end
 end

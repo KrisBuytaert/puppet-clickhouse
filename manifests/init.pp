@@ -1,13 +1,11 @@
 # Top level class for ClickHouse DBMS installation and management.
 #
-# @summary this class allows you to install ClickHouse DB's repo, client and server
+# @summary this class allows you to install ClickHouse DB's client, server and keeper (the package repository is the consumer's job)
 #
 # @param server [Boolean]
 #   Is clickhouse-server should be installed or not. It won't be installed by default, because some time you need the client only.
 # @param client [Boolean]
 #   Is clickhouse-client should be installed or not.
-# @param manage_repo [Boolean]
-#   Is apt or yum repository should be managed. Set to `false` by default to not affect your own repositories policy.
 # @param user
 #   User for configs owning. Strongly recommended staying default.
 #
@@ -24,11 +22,10 @@
 #     server => true,
 #   }
 #
-# @example Install everything and manage repository
+# @example Install everything (the consumer provides the package repository)
 #   class { 'clickhouse':
-#     server      => true,
-#     client      => true,
-#     manage_repo => true,
+#     server => true,
+#     client => true,
 #   }
 #
 # @author InnoGames GmbH
@@ -37,7 +34,6 @@ class clickhouse (
     Boolean   $server            = false,
     Boolean   $client            = true,
     Boolean   $keeper            = true,
-    Boolean   $manage_repo       = false,
     Boolean   $manage_package     = true,
     Boolean   $purge             = true,
     String[1] $user        = 'clickhouse',
@@ -51,10 +47,6 @@ class clickhouse (
 
     if $client {
         include clickhouse::client
-    }
-
-    if $manage_repo {
-        include clickhouse::repo
     }
 
 
