@@ -95,6 +95,8 @@ GROUP BY d.name, d.engine
       return "Lazy(#{@resource[:engine_settings]})" if @resource.parameter_lazy?
     when :MySQL
       return 'MySQL(' + @resource[:engine_settings].map { |p| "'#{p}'" }.join(', ') + ')' if @resource.parameter_mysql?
+    when :Atomic
+      return 'Atomic' if @resource[:engine_settings].nil?
     when :Ordinary
       return 'Ordinary' if @resource.parameter_ordinary?
     end

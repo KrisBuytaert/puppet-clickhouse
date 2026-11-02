@@ -32,18 +32,21 @@ Puppet::Type.newtype(:clickhouse_database) do
   newproperty(:engine) do
     desc 'Engine of the database'
 
+    newvalue(:Atomic)
     newvalue(:Lazy)
     newvalue(:MySQL)
     newvalue(:Ordinary)
 
-    defaultto :Ordinary
+    # Atomic is ClickHouse's own default since 20.10 and the only engine modern servers still
+    # accept for new databases next to Lazy/MySQL; Ordinary creation is refused (error 80).
+    defaultto :Atomic
   end
 
   newparam(:engine_settings) do
     desc "This parameter depends on the `engine` parameter:
 Lazy: must be Integer[1]
 MySQL: must be Array[String, 4, 4]
-Ordinary: must be undefined
+Atomic, Ordinary: must be undefined
 
 See: https://clickhouse.tech/docs/en/engines/database_engines/"
 
@@ -86,6 +89,10 @@ If ENGINE=MySQL for an existing database, it will be dropped anyway since it's j
     end
     if value(:engine) == :Ordinary && !parameter_ordinary?
       raise Puppet::ResourceError, "Attribute `engine_settings` must be undef with engine => 'Ordinary'"
+    end
+
+    if value(:engine) == :Atomic && !parameter_ordinary?
+      raise Puppet::ResourceError, "Attribute `engine_settings` must be undef with engine => 'Atomic'"
     end
   end
 end

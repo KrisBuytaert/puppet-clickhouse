@@ -129,4 +129,26 @@ describe Puppet::Type.type(:clickhouse_database) do
       }.to raise_error(Puppet::ResourceError, error_msg)
     end
   end
+
+  context 'check Atomic engine (the default)' do
+    let(:resource) { described_class.new(name: 'test_database', ensure: :present) }
+
+    it 'defaults to Atomic without engine settings' do
+      expect(resource[:engine]).to eq(:Atomic)
+      expect(resource).to be_parameter_ordinary
+    end
+
+    it 'rejects engine_settings' do
+      expect {
+        described_class.new(name: 'test_database', engine: :Atomic, engine_settings: 1)
+      }.to raise_error(Puppet::ResourceError, %r{must be undef with engine => 'Atomic'})
+    end
+
+    it 'creates the database with ENGINE=Atomic' do
+      provider = described_class.new(name: 'test_database', provider: :clickhouse).provider
+      expect(provider.class).to receive(:execute_sql).with('CREATE DATABASE test_database ENGINE=Atomic')
+      allow(provider).to receive(:exists?).and_return(true)
+      provider.create
+    end
+  end
 end
