@@ -1,10 +1,9 @@
 [![Build Status](https://travis-ci.org/innogames/puppet-clickhouse.svg?branch=master)](https://travis-ci.org/innogames/puppet-clickhouse)
 # Description
-This module provides an easy way to install and configure ClickHouse DBMS. The easiest way to do the magic is:
+This module provides an easy way to install and configure ClickHouse DBMS. The module does not configure a package repository: the consuming profile must provide one that carries `clickhouse-server` and `clickhouse-client` (for example the official `packages.clickhouse.com` repository). The easiest way to do the magic is:
 ```puppet
 class { 'clickhouse':
-  server      => true,
-  manage_repo => true,
+  server => true,
 }
 ```
 
@@ -21,9 +20,8 @@ See the [examples](./REFERENCE.md#examples)
 
 **Classes**
 
-* [`clickhouse`](./REFERENCE.md#clickhouse): this class allows you to install ClickHouse DB's repo, client and server
+* [`clickhouse`](./REFERENCE.md#clickhouse): this class allows you to install ClickHouse DB's client, server and keeper
 * [`clickhouse::client`](./REFERENCE.md#clickhouseclient): ClickHouse client class
-* [`clickhouse::repo`](./REFERENCE.md#clickhouserepo): installs repository with ClickHouse DBMS
 * [`clickhouse::server`](./REFERENCE.md#clickhouseserver): ClickHouse server class
 * [`clickhouse::server::config::memory`](./REFERENCE.md#clickhouseserverconfigmemory): Configure memory consumption
 * [`clickhouse::server::config::zookeeper`](./REFERENCE.md#clickhouseserverconfigzookeeper): Set proper zookeeper config
