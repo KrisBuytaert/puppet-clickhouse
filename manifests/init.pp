@@ -6,6 +6,10 @@
 #   Is clickhouse-server should be installed or not. It won't be installed by default, because some time you need the client only.
 # @param client [Boolean]
 #   Is clickhouse-client should be installed or not.
+# @param service_ensure
+#   Passed to clickhouse::server's service_ensure (running or stopped).
+# @param service_enable
+#   Passed to clickhouse::server's service_enable (false keeps it from starting at boot).
 # @param user
 #   User for configs owning. Strongly recommended staying default.
 #
@@ -36,13 +40,18 @@ class clickhouse (
     Boolean   $keeper            = true,
     Boolean   $manage_package     = true,
     Boolean   $purge             = true,
+    Enum['running', 'stopped'] $service_ensure = 'running',
+    Boolean   $service_enable    = true,
     String[1] $user        = 'clickhouse',
     String[1] $group       = $user,
     String    $keeper_packagename = 'clickhouse-keeper',
 ) {
 
     if $server {
-        include clickhouse::server
+        class { 'clickhouse::server':
+            service_ensure => $service_ensure,
+            service_enable => $service_enable,
+        }
     }
 
     if $client {
